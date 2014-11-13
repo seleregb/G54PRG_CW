@@ -1,12 +1,10 @@
-#!/usr/bin/env python
 
+#   Breakout V 0.1 November 2014
 #
-#   Breakout V 0.1 June 2009
+#   Copyright (C) 2014 Lee How Kiat, SelereGB
 #
-#   Copyright (C) 2009 John Cheetham    
-#
-#   web   : http://www.johncheetham.com/projects/breakout
-#   email : developer@johncheetham.com
+#   web   :
+#   email :
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
