@@ -63,7 +63,7 @@ class Breakout():
         pygame.key.set_repeat(1,30)       
         pygame.mouse.set_visible(0)       # turn off mouse pointer
 
-        while 1:
+        while 1: #Game loop
 
             # 60 frames per second
             clock.tick(60)
@@ -121,6 +121,9 @@ class Breakout():
             # check if ball has gone past bat - lose a life
             if ballrect.top > height:
                 lives -= 1
+
+
+
                 # start a new ball
                 xspeed = xspeed_init
                 rand = random.random()                
@@ -174,12 +177,20 @@ class Breakout():
                 pong.play(0)              
                 wall.brickrect[index:index + 1] = []
                 score += 10
-                          
+
+            #display the scores
             screen.fill(bgcolour)
             scoretext = pygame.font.Font(None,40).render(str(score), True, (0,255,255), bgcolour)
             scoretextrect = scoretext.get_rect()
             scoretextrect = scoretextrect.move(width - scoretextrect.right, 0)
             screen.blit(scoretext, scoretextrect)
+
+            #display the lives left
+            livesleft = pygame.font.Font(None,40).render(str(lives), True, (0,255,255), bgcolour)
+            livesleftrect = livesleft.get_rect()
+            livesleftrect = livesleftrect.move(0,0)
+            screen.blit(livesleft, livesleftrect)
+
 
             for i in range(0, len(wall.brickrect)):
                 screen.blit(wall.brick, wall.brickrect[i])    
