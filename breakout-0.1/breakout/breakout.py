@@ -35,6 +35,7 @@ class Breakout():
         score = 0 
         bgcolour = 0x2F, 0x4F, 0x4F  # darkslategrey        
         size = width, height = 640, 480
+        gamelevel = 0
 
         pygame.init()            
         screen = pygame.display.set_mode(size)
@@ -46,6 +47,11 @@ class Breakout():
         ball = pygame.image.load("ball.png").convert()
         ball.set_colorkey((255, 255, 255))
         ballrect = ball.get_rect()
+
+        #declaring the hearts image object
+        hearts = pygame.image.load("Simple_Red_Heart.png").convert()
+        hearts.set_colorkey((255, 255 , 255))
+        heartsrect = hearts.get_rect()
        
         pong = pygame.mixer.Sound('Blip_1-Surround-147.wav')
         pong.set_volume(10)        
@@ -62,6 +68,15 @@ class Breakout():
         clock = pygame.time.Clock()
         pygame.key.set_repeat(1,30)       
         pygame.mouse.set_visible(0)       # turn off mouse pointer
+
+        '''
+        gamemsg = pygame.font.Font(None,70).render(str("Level {}".format(gamelevel)), True, (0,255,255), bgcolour)
+        gamemsgrect = gamemsg.get_rect()
+        gamemsgrect = gamemsgrect.move(width / 2 - (gamemsgrect.center[0]), height / 3)
+        screen.blit(gamemsg, gamemsgrect)
+        pygame.display.flip()
+        pygame.time.delay(5000)
+        '''
 
         while 1: #Game loop
 
@@ -121,8 +136,6 @@ class Breakout():
             # check if ball has gone past bat - lose a life
             if ballrect.top > height:
                 lives -= 1
-
-
 
                 # start a new ball
                 xspeed = xspeed_init
@@ -186,6 +199,7 @@ class Breakout():
             screen.blit(scoretext, scoretextrect)
 
             #display the lives left
+            #adding the hearts image to the display
             livesleft = pygame.font.Font(None,40).render(str(lives), True, (0,255,255), bgcolour)
             livesleftrect = livesleft.get_rect()
             livesleftrect = livesleftrect.move(0,0)
@@ -193,7 +207,7 @@ class Breakout():
 
 
             for i in range(0, len(wall.brickrect)):
-                screen.blit(wall.brick, wall.brickrect[i])    
+                screen.blit(wall.brick, wall.brickrect[i])    #displaying the brick wall
 
             # if wall completely gone then rebuild it
             if wall.brickrect == []:              
