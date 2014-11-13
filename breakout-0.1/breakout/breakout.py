@@ -28,8 +28,8 @@ class Breakout():
    
     def main(self):
           
-        xspeed_init = 6
-        yspeed_init = 6
+        xspeed_init = 3
+        yspeed_init = 3
         max_lives = 5
         bat_speed = 30
         score = 0 
