@@ -1,1 +1,6 @@
 http://muagames.com/tutorials/pygame-4-breakout/pygame-4-breakout-step-5-part-1/
+
+
+Selere - Figure out how to show the Message Screen of each level ( Level 1 , Level 2 , Level 3 .... )
+
+James - Figure out how to create multiple balls and also show the lives
