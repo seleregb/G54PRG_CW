@@ -3,8 +3,9 @@
 #
 #   Copyright (C) 2014 Lee How Kiat, SelereGB
 #
-#   web   :
-#   email :
+#   web   : https://github.com/seleregb/G54PRG_CW
+#   email : khcx4lha@nottingham.edu.my - Lee How Kiat
+#         : khcxoor@nottingham.edu.my - SelereGB
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
