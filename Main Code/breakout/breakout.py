@@ -39,6 +39,7 @@ def main(screen):
     size = width, height = 640, 480
     gamelevel = 0
 
+
     pygame.init()
     screen = pygame.display.set_mode(size)
     #screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
@@ -54,6 +55,7 @@ def main(screen):
     hearts = pygame.image.load("Simple_Red_Heart.png").convert()
     hearts.set_colorkey((255, 255 , 255))
     heartsrect = hearts.get_rect()
+
 
     pong = pygame.mixer.Sound('Blip_1-Surround-147.wav')
     pong.set_volume(10)
@@ -139,6 +141,12 @@ def main(screen):
         if ballrect.top > height:
             lives -= 1
 
+            tile = pygame.image.load("tile.png").convert()
+            tile.set_colorkey((255, 255, 255))
+            livepos-=30
+            print livepos
+            screen.blit(tile, (livepos,0))
+
             # start a new ball
             xspeed = xspeed_init
             rand = random.random()
@@ -181,7 +189,7 @@ def main(screen):
             pong.play(0)
 
         # check if ball has hit wall
-        # if yes yhen delete brick and change ball direction
+        # if yes then delete brick and change ball direction
         index = ballrect.collidelist(wall.brickrect)
         if index != -1:
             if ballrect.center[0] > wall.brickrect[index].right or \
@@ -202,10 +210,22 @@ def main(screen):
 
         #display the lives left
         #adding the hearts image to the display
-        livesleft = pygame.font.Font(None,40).render(str(lives), True, (0,255,255), bgcolour)
-        livesleftrect = livesleft.get_rect()
-        livesleftrect = livesleftrect.move(0,0)
-        screen.blit(livesleft, livesleftrect)
+        #livesleft = pygame.font.Font(None,40).render(str(lives), True, (0,255,255), bgcolour)
+        #livesleftrect = livesleft.get_rect()
+        #livesleftrect = livesleftrect.move(0,0)
+        #screen.blit(livesleft, livesleftrect)
+
+        #Display the number of live left.
+        livepos = 0
+        for i in range(lives):
+
+            hearts = pygame.image.load("ball.png").convert()
+            hearts.set_colorkey((255, 255 , 255))
+            heartsrect = hearts.get_rect()
+            heartsrect = heartsrect.move(livepos,0)
+            screen.blit(hearts, heartsrect)
+            livepos+=30
+
 
 
         for i in range(0, len(wall.brickrect)):
