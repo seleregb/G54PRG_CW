@@ -21,6 +21,16 @@ class Paddle(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, 90)
         self.rect = self.image.get_rect()
 
+    def move(self, dx):
+        """Move the paddle in the x direction. Don't go past the sides"""
+        if dx != 0:
+            if self.rect.right + dx > 510:
+                self.rect.right = 510
+            elif self.rect.left + dx < 10:
+                self.rect.left = 10
+            else:
+                self.rect.x += dx
+
     def grow(self):
         """Increases the size of the paddle."""
         # get current position
@@ -77,15 +87,11 @@ class Ball(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, 90)
         self.rect = self.image.get_rect()
 
-class Wall(pygame.sprite.Sprite):
-    def __init__(self, xy):
-        # initialize the pygame sprite part
-        pygame.sprite.Sprite.__init__(self)
-
+class Wall():
+    def __init__(self):
         # set image and rect
         self.image = pygame.image.load("brick.png").convert()
         self.rect = self.image.get_rect()
-
         self.bricklength = self.rect.right - self.rect.left
         self.brickheight = self.rect.bottom - self.rect.top
 
@@ -103,7 +109,7 @@ class Wall(pygame.sprite.Sprite):
                 xpos = -adj
                 ypos += self.brickheight
 
-            self.brickrect.append(self.brick.get_rect())
+            self.brickrect.append(self.image.get_rect())
             self.brickrect[i] = self.brickrect[i].move(xpos, ypos)
             xpos = xpos + self.bricklength
 
@@ -126,8 +132,10 @@ class Game(object):
         # load and set up pygame
         pygame.init()
 
+        self.size = width,height = 640,480
+
         # create our window
-        self.window = pygame.display.set_mode((640, 480))
+        self.window = pygame.display.set_mode(self.size)
 
         # clock for ticking
         self.clock = pygame.time.Clock()
@@ -154,9 +162,14 @@ class Game(object):
         self.paddle = Paddle((260,550))
         self.sprites.add(self.paddle)
 
+        self.pong = pygame.mixer.Sound('Blip_1-Surround-147.wav')
+        self.pong.set_volume(10)
+
         self.wall = Wall()
-        self.wall.build_wall(640)
-        self.sprites.add(self.wall)
+        self.wall.build_wall(width)
+
+        pygame.key.set_repeat(1,30)
+        pygame.mouse.set_visible(0)       # turn off mouse pointer
 
     def run(self):
         """Runs the game. Contains the game loop that computes and renders
@@ -186,11 +199,8 @@ class Game(object):
             self.sprites.clear(self.window, self.background)    # clears the window where the sprites currently are, using the background
 
 
-
-            '''
             for i in range(0, len(self.wall.brickrect)):
-                self.window.blit(self.wall.brick, self.wall.brickrect[i])
-            '''
+                self.window.blit(self.wall.image, self.wall.brickrect[i])
 
 
 
