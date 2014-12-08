@@ -222,7 +222,6 @@ def main(screen):
             livepos+=30
 
 
-
         for i in range(0, len(wall.brickrect)):
             screen.blit(wall.brick, wall.brickrect[i])    #displaying the brick wall
 
