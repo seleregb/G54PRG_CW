@@ -141,11 +141,6 @@ def main(screen):
         if ballrect.top > height:
             lives -= 1
 
-            tile = pygame.image.load("tile.png").convert()
-            tile.set_colorkey((255, 255, 255))
-            livepos-=30
-            print livepos
-            screen.blit(tile, (livepos,0))
 
             # start a new ball
             xspeed = xspeed_init
@@ -225,7 +220,6 @@ def main(screen):
             heartsrect = heartsrect.move(livepos,0)
             screen.blit(hearts, heartsrect)
             livepos+=30
-
 
 
         for i in range(0, len(wall.brickrect)):
