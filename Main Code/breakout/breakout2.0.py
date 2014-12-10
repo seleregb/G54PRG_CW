@@ -70,6 +70,43 @@ class Ball():
         self.ballrect = self.bimage.get_rect()
 
 
+class Powerup():
+    """A powerup."""
+    def __init__(self, type='bigpaddle'):
+        # some variables we need
+        self.type = type            # which powerup is it
+        self.collected = False      # has it been collected yet?
+        self.countdown = 1          # duration of the effect
+
+        # set individual countdowns for the powerups with actual durations
+        if type == 'bigpaddle':
+            self.countdown = 60 * 25
+        elif type == 'slowball':
+            self.countdown = 60 * 10
+
+        self.imagepaths = {
+            'bigpaddle': pygame.image.load("powerup_paddle.png"),
+            'laser': pygame.image.load( "powerup_laser.png"),
+            '1up': pygame.image.load("powerup_lightning.png"),
+            'slowball': pygame.image.load("powerup_ball.png"),
+        }
+
+        # set image and rect so we can be rendered
+        self.image = pygame.image.load(self.imagepaths[type])
+        self.rect = self.image.get_rect()
+
+        # set initial position somewhere near the top but below the blocks
+        self.rect.center = random.randint(20, 500), 125
+
+    def update(self):
+        """Called every frame. Move the powerup down a bit so it 'falls' down
+        the screen. Return false if below the screen because the player
+        missed it."""
+        self.rect.y += 2
+        if self.rect.y > 600:
+            return False
+        return True
+
 class Wall():
     def __init__(self):
         # set image and rect
@@ -132,6 +169,14 @@ class Game(object):
         self.wall = Wall()
         self.wall.build_wall(self.width)
 
+        # track the state of the game
+        self.isReset = True
+        self.playing = True
+
+        # variables for powerups
+        self.currentpowerup = None
+        self.powerupdrop = 60 * 10
+
         # Initialise ready for game loop
         self.paddle.paddlerect = self.paddle.paddlerect.move((self.width / 2) - (self.paddle.paddlerect.right / 2), self.height - 20)
         self.ball.ballrect = self.ball.ballrect.move(self.width / 2, self.height / 2)
@@ -154,6 +199,8 @@ class Game(object):
 
             # 60 frames per second
             self.clock.tick(60)
+
+            self.managePowerups()
 
             # process key presses
             for event in pygame.event.get():
@@ -294,6 +341,85 @@ class Game(object):
             self.window.blit(self.paddle.pimage, self.paddle.paddlerect)
             pygame.display.flip()
 
+
+    def managePowerups(self):
+        """Called each frame. Drops new powerups as necessary. Checks if the
+        paddle hits a powerup and applies the powerup. Manages the powerups
+        timing out."""
+        # no powerup, update countdown and drop one if necessary
+        self.sprites = []
+        if self.currentpowerup is None:
+            # decrement powerup drop countdown
+            if not self.isReset:    # dont continue countddown if waiting to serve
+                self.powerupdrop -= 1
+
+                # drop a powerup if time
+                if self.powerupdrop <= 0:
+
+                    # drop chances to use with random
+                    droppercentages = [
+                    (10, '1up'),        # 10% chance
+                    (30, 'laser'),      # 20% chance
+                    (55, 'slowball'),   # 25% chance
+                    (100, 'bigpaddle')  # 45% chance
+                    ]
+
+                    # decide which powerup to drop
+                    choice = random.uniform(0,100)
+                    for chance, type in droppercentages:
+                        if choice <= chance:
+                            # create new powerup and add it to render group
+                            self.currentpowerup = Powerup(type)
+                            self.sprites.append(self.currentpowerup)
+                            break
+            return
+
+        # if powerup hasn't been collected yet, check for collision
+        if not self.currentpowerup.collected:
+            # collision, ie: the player collected the powerup
+            if self.paddle.paddlerect.colliderect(self.currentpowerup.rect):
+                # apply the powerup
+                if self.currentpowerup.type == 'bigpaddle':
+                    # increase paddle size
+                    self.paddle.grow()
+
+                elif self.currentpowerup.type == '1up':
+                    # increment player lives
+                    self.lives += 1
+
+                # set collected so timer starts
+                self.currentpowerup.collected = True
+                self.sprites.remove(self.currentpowerup)
+
+            # not colliding - keep moving and check if we missed it
+            else:
+                # update powerup and delete if necessary
+                alive = self.currentpowerup.update()
+                if not alive:
+                    self.sprites.remove(self.currentpowerup)
+                    self.currentpowerup = None
+
+                    # reset drop counter
+                    self.powerupdrop = random.randint(60 * 10, 60 * 20)
+
+        # if powerup is currently active, continue countdown
+        elif self.currentpowerup.countdown > 0:
+            # decrement countdown
+            self.currentpowerup.countdown -= 1
+
+        # powerup is over -- has been collected and countdown <= 0
+        else:
+
+            # if we haven't turned off the current powerup yet, do so
+            if self.currentpowerup is not None:
+                if self.currentpowerup.type == 'bigpaddle':
+                    self.paddle.shrink()
+
+                # set current to none
+                self.currentpowerup = None
+
+                # set new powerupdrop countdown
+                self.powerupdrop = random.randint(60 * 30, 60 * 60)
 
 
 # create a game and run it
