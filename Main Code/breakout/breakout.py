@@ -51,12 +51,6 @@ def main(screen):
     ball.set_colorkey((255, 255, 255))
     ballrect = ball.get_rect()
 
-    #declaring the hearts image object
-    hearts = pygame.image.load("Simple_Red_Heart.png").convert()
-    hearts.set_colorkey((255, 255 , 255))
-    heartsrect = hearts.get_rect()
-
-
     pong = pygame.mixer.Sound('Blip_1-Surround-147.wav')
     pong.set_volume(10)
 
