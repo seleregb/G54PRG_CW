@@ -325,6 +325,7 @@ class Game(object):
                     self.msgrect = self.msg.get_rect()
                     self.msgrect = self.msgrect.move(self.width / 2 - (self.msgrect.center[0]), self.height / 3)
                     self.window.blit(self.msg, self.msgrect)
+                    self.handleHighScores()
                     pygame.display.flip()
                     # process key presses
                     #     - ESC to quit
@@ -427,7 +428,6 @@ class Game(object):
                 pygame.display.update(dirty+[namerect])
                 pygame.display.flip()
 
-                self.handleHighScores()
 
         print 'Quitting. Thanks for playing'
 
