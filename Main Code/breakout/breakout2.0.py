@@ -204,6 +204,7 @@ class Game(object):
         # track the state of the game
         #self.isReset = True
         self.playing = True
+        self.enteringname = False
 
         # a sprite rendering group for our ball and paddle
         self.sprites = pygame.sprite.RenderUpdates()
@@ -393,6 +394,20 @@ class Game(object):
             self.window.blit(self.ball.bimage, self.ball.ballrect)
             self.window.blit(self.paddle.pimage, self.paddle.paddlerect)
             pygame.display.flip()
+
+            # entering name, render name sprite
+            if self.enteringname:
+                font = pygame.font.Font(None, 35)  # load the default font, size 50
+                color = (255, 50, 0)
+                nameimage = font.render('Enter Name:', True, color)
+                namerect = nameimage.get_rect()
+                namerect.center = 260, 250
+                self.window.blit(nameimage,namerect)
+
+                self.namesprites.clear(self.window, self.bgcolour)
+                dirty = self.namesprites.draw(self.window)
+                pygame.display.update(dirty+[namerect])
+                pygame.display.flip()
 
         print 'Quitting. Thanks for playing'
 
