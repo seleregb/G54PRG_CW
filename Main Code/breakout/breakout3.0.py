@@ -65,7 +65,7 @@ class Paddle(pygame.sprite.Sprite):
 
         # set image and rect
         self.image = pygame.image.load("bat.png").convert()
-        self.image = pygame.transform.rotate(self.image, 90)
+        #self.image = pygame.transform.rotate(self.image, 90)
 
         # double image size
         self.image = pygame.transform.scale2x(self.image)
@@ -89,7 +89,7 @@ class Paddle(pygame.sprite.Sprite):
 
         # set image and rect
         self.image = pygame.image.load("bat.png").convert()
-        #self.image = pygame.transform.rotate(self.image, 90)
+        self.image = pygame.transform.rotate(self.image, 90)
 
         # get new rect
         self.rect = self.image.get_rect()
@@ -240,10 +240,7 @@ class BlockFactory(object):
         # load all our block images
         self.images = {
             1: pygame.image.load("brick.png").convert(),
-            2: pygame.image.load("brick.png").convert(),
-            3: pygame.image.load("brick.png").convert(),
-            4: pygame.image.load("brick.png").convert(),
-            5: pygame.image.load("brick.png").convert()
+            2: pygame.image.load("solidbrick.png").convert()
         }
 
     def getBlock(self, xy, level=1):
