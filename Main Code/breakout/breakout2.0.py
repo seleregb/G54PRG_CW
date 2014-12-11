@@ -326,6 +326,7 @@ class Game(object):
                             self.wall.build_wall(self.width)
                             self.lives = self.max_lives
                             self.score = 0
+                            self.handleHighScores()
                             break
             
             if self.xspeed < 0 and self.ball.ballrect.left < 0:

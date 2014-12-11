@@ -337,18 +337,17 @@ class Powerup(pygame.sprite.Sprite):
         # set individual countdowns for the powerups with actual durations
         if type == 'bigpaddle':
             self.countdown = 60 * 25
+            self.image = pygame.image.load("powerup_paddle.png").convert()
         elif type == 'slowball':
             self.countdown = 60 * 10
+            self.image = pygame.image.load("powerup_ball.png").convert()
+        elif type == 'laser':
+            self.image = pygame.image.load("powerup_laser.png").convert()
+        else:
+            self.image = pygame.image.load("powerup_lightning.png").convert()
 
-        self.imagepaths = {
-            'bigpaddle': os.path.join('images', 'powerup_paddle.png'),
-            'laser': os.path.join('images', 'powerup_laser.png'),
-            '1up': os.path.join('images', 'powerup_lightning.png'),
-            'slowball': os.path.join('images', 'powerup_ball.png'),
-        }
 
         # set image and rect so we can be rendered
-        self.image = pygame.image.load(self.imagepaths[type])
         self.rect = self.image.get_rect()
 
         # set initial position somewhere near the top but below the blocks
@@ -514,8 +513,8 @@ class Game(object):
             # handle pygame events -- if user closes game, stop running
             running = self.handleEvents()
 
-            # update the title bar with our frames per second
-            pygame.display.set_caption('Pygame Tutorial 4 - Breakout   %d fps' % self.clock.get_fps())
+
+            pygame.display.set_caption("Simple Breakout")
 
             # if we haven't lost yet
             if self.playing:
