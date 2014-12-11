@@ -87,7 +87,7 @@ class Powerup(pygame.sprite.Sprite):
         if type == 'bigpaddle':
             self.countdown = 60 * 25
             self.image = pygame.image.load("powerup_paddle.png").convert()
-        elif type == 'slowball':
+        elif type == 'multiball':
             self.countdown = 60 * 10
             self.image = pygame.image.load("powerup_ball.png").convert()
         elif type == 'laser':
@@ -167,6 +167,7 @@ class Game(object):
         self.paddle = Paddle()
         self.ball = Ball()
 
+
         # set the window title
         pygame.display.set_caption("Simple Breakout")
 
@@ -186,7 +187,7 @@ class Game(object):
 
         # variables for powerups
         self.currentpowerup = None
-        self.powerupdrop = 60 * 10
+        self.powerupdrop = 60 * 1
 
 
 
@@ -256,10 +257,12 @@ class Game(object):
                     elif self.offset < -23:
                         self.xspeed = -6
                     elif self.xspeed < -17:
-                        self.xspeed = -5     
+                        self.xspeed = -5
+
                       
             # move bat/ball
             self.ball.ballrect = self.ball.ballrect.move(self.xspeed, self.yspeed)
+
             if self.ball.ballrect.left < 0 or self.ball.ballrect.right > self.width:
                 self.xspeed = -self.xspeed                
                 self.pong.play(0)            
@@ -388,7 +391,7 @@ class Game(object):
                 droppercentages = [
                 (10, '1up'),        # 10% chance
                 (30, 'laser'),      # 20% chance
-                (55, 'slowball'),   # 25% chance
+                (80, 'multiball'),   # 25% chance
                 (100, 'bigpaddle')  # 45% chance
                 ]
 
@@ -417,7 +420,18 @@ class Game(object):
                     # increment player lives
                     self.lives += 1
 
-                # set collected so timer starts
+                elif self.currentpowerup.type == 'multiball':
+                    print "multiball"
+                    """
+                    self.ball2 = Ball()
+                    for i in range(60*100):
+                        print "m1"
+                        #self.ball2.ballrect = self.ball2.ballrect.move(self.width / 2, self.height / 2)
+                        self.ball2.ballrect = self.ball2.ballrect.move(self.xspeed, self.yspeed)
+                        self.window.blit(self.ball2.bimage, self.ball2.ballrect)
+                    """
+
+                #set collected so timer starts
                 self.currentpowerup.collected = True
                 self.sprites.remove(self.currentpowerup)
 
