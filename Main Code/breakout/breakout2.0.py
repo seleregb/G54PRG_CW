@@ -187,10 +187,8 @@ class Game(object):
         # create our window
         self.window = pygame.display.set_mode(self.size)
 
-
         self.paddle = Paddle()
         self.ball = Ball()
-
 
         # set the window title
         pygame.display.set_caption("Simple Breakout")
@@ -255,6 +253,26 @@ class Game(object):
                         self.paddle.paddlerect = self.paddle.paddlerect.move(self.paddle_speed, 0)
                         if (self.paddle.paddlerect.right > self.width):
                             self.paddle.paddlerect.right = self.width
+                    # if entering name, save keys
+                if self.enteringname:
+
+                    # if backspace, remove last letter until empty string
+                    if event.key == K_BACKSPACE:
+                        self.namesprite.removeLetter()
+
+                    # if enter, self.nameEntered with name
+                    elif event.key == K_RETURN:
+                        self.nameEntered()
+
+                    else:
+                        try:
+                            char = chr(event.key)
+                            # all the characters we want to allow
+                            if str(char) in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_':
+                                self.namesprite.addLetter(char)
+                        except:
+                            pass    # exception from not being able to get char, dont care
+
 
             # check if bat has hit ball    
             if self.ball.ballrect.bottom >= self.paddle.paddlerect.top and \
@@ -408,6 +426,8 @@ class Game(object):
                 dirty = self.namesprites.draw(self.window)
                 pygame.display.update(dirty+[namerect])
                 pygame.display.flip()
+
+                self.handleHighScores()
 
         print 'Quitting. Thanks for playing'
 
