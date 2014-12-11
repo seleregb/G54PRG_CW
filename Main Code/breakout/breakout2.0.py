@@ -63,9 +63,6 @@ class Paddle():
             self.paddlerect.left = 11
 
 
-
-
-
 class Ball():
     def __init__(self):
         # set image and rect
@@ -96,13 +93,11 @@ class Powerup(pygame.sprite.Sprite):
             self.image = pygame.image.load("powerup_lightning.png").convert()
 
 
-
         # set image and rect so we can be rendered
         self.rect = self.image.get_rect()
 
         # set initial position somewhere near the top but below the blocks
         self.rect.center = random.randint(20, 500), 125
-
 
 
     def update(self):
@@ -113,6 +108,35 @@ class Powerup(pygame.sprite.Sprite):
         if self.rect.y > 600:
             return False
         return True
+
+class NameSprite(pygame.sprite.Sprite):
+    """A sprite for the play to enter their name"""
+
+    def __init__(self, xy):
+        pygame.sprite.Sprite.__init__(self)
+        self.xy = xy
+        self.text = ''
+        self.color = (255, 0, 0)
+        self.font = pygame.font.Font(None, 35)  # load the default font, size 35
+        self.reRender() # generate the image
+
+    def addLetter(self, letter):
+        """Adds the given letter"""
+        self.text += str(letter)
+        self.reRender()
+
+    def removeLetter(self):
+        if len(self.text) == 1:
+            self.text = ''
+        else:
+            self.text = self.text[:-1]
+        self.reRender()
+
+    def reRender(self):
+        """Updates the text."""
+        self.image = self.font.render(self.text, True, self.color)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.xy
 
 class Wall():
     def __init__(self):
@@ -180,7 +204,7 @@ class Game(object):
         # track the state of the game
         #self.isReset = True
         self.playing = True
-
+        self.enteringname = False
 
         # a sprite rendering group for our ball and paddle
         self.sprites = pygame.sprite.RenderUpdates()
@@ -189,7 +213,8 @@ class Game(object):
         self.currentpowerup = None
         self.powerupdrop = 60 * 1
 
-
+        # sprite group for name block
+        self.namesprites = pygame.sprite.RenderUpdates()
 
         # Initialise ready for game loop
         self.paddle.paddlerect = self.paddle.paddlerect.move((self.width / 2) - (self.paddle.paddlerect.right / 2), self.height - 20)
@@ -204,7 +229,6 @@ class Game(object):
         pygame.mouse.set_visible(0)  # turn off mouse pointer
 
 
-
     def run(self):
         """Runs the game. Contains the game loop that computes and renders
         each frame."""
@@ -215,8 +239,6 @@ class Game(object):
 
             # 60 frames per second
             self.clock.tick(60)
-
-
 
             # process key presses
             for event in pygame.event.get():
@@ -373,6 +395,21 @@ class Game(object):
             self.window.blit(self.paddle.pimage, self.paddle.paddlerect)
             pygame.display.flip()
 
+            # entering name, render name sprite
+            if self.enteringname:
+                font = pygame.font.Font(None, 35)  # load the default font, size 50
+                color = (255, 50, 0)
+                nameimage = font.render('Enter Name:', True, color)
+                namerect = nameimage.get_rect()
+                namerect.center = 260, 250
+                self.window.blit(nameimage,namerect)
+
+                self.namesprites.clear(self.window, self.bgcolour)
+                dirty = self.namesprites.draw(self.window)
+                pygame.display.update(dirty+[namerect])
+                pygame.display.flip()
+
+        print 'Quitting. Thanks for playing'
 
     def managePowerups(self):
         """Called each frame. Drops new powerups as necessary. Checks if the
@@ -465,6 +502,111 @@ class Game(object):
 
                 # set new powerupdrop countdown
                 self.powerupdrop = random.randint(60 * 30, 60 * 60)
+
+    def handleHighScores(self):
+        """Called to prompt the user to enter a new
+        high score name and show the high score table."""
+
+        # load high scores
+        highscores = self.parseHighScores()
+
+        # if current score belongs on the table
+        if self.score > int(highscores[-1][1]):
+            # prompt for user name
+            self.enteringname = True
+            self.namesprite = NameSprite( (260, 310) )
+            self.namesprites.add(self.namesprite)
+
+        # otherwise just show table
+        else:
+            self.showHighScores(highscores)
+
+    def nameEntered(self):
+        self.enteringname = False
+        username = self.namesprite.text
+
+        # blit the background onto the window
+        self.window.blit(self.bgcolour, (0,0))
+        # flip the display so the background is on there
+        pygame.display.flip()
+
+        # load high scores
+        highscores = self.parseHighScores()
+
+        # insert the player's score into the highscore table
+        newscores = []
+        for name, score in highscores:
+            if self.score > int(score):
+                newscores.append((username, str(self.score)))
+                self.score = 0    # set to 0 so we dont add it again
+            newscores.append((name, score))
+        newscores = newscores[0:10] # only take 10
+
+        # write scores to high score table
+        highscorefile = 'highscores.txt'
+        f = open(highscorefile, 'w')
+        for name, score in newscores:
+            f.write("%s:%s\n" % (name, score))
+        f.close()
+
+        # display high scores
+        self.showHighScores(newscores)
+
+    def parseHighScores(self):
+        """Parses the high score table and returns a
+        list of scores and their owners"""
+        highscorefile = 'highscores.txt'
+        if os.path.isfile(highscorefile):
+            # read the file into lines
+            f = open(highscorefile, 'r')
+            lines = f.readlines()
+            # break lines into length 2 lists [name, score]
+            scores = []
+            for line in lines:
+                scores.append( line.strip().split(':'))
+            return scores
+        else:
+            # generate default highscore table
+            f = open(highscorefile, 'w')
+            f.write("""JJJ:10000
+III:9000
+HHH:8000
+GGG:7000
+FFF:6000
+EEE:5000
+DDD:4000
+CCC:3000
+BBB:2000
+AAA:1000""")
+            f.close()
+            # call method again - will load the scores we just wrote this time
+            return self.parseHighScores()
+
+    def showHighScores(self, scores):
+        """Draws the high score table onto the screen."""
+        font = pygame.font.Font(None, 35)  # load the default font, size 50
+        color = (255, 50, 0)
+
+        for i in range(len(scores)):
+            name, score = scores[i]
+            # render name
+            nameimage = font.render(name, True, color)
+            namerect = nameimage.get_rect()
+            namerect.left, namerect.y = 40, 100 + (i*(namerect.height + 20))
+            self.window.blit(nameimage,namerect)
+
+            # render score
+            scoreimage = font.render(score, True, color)
+            scorerect = scoreimage.get_rect()
+            scorerect.right, scorerect.y = 480, namerect.y
+            self.window.blit(scoreimage, scorerect)
+
+            # draw dots from name until score
+            for d in range(namerect.right + 25, scorerect.left-10, 25):
+                pygame.draw.rect(self.window, color, pygame.Rect(d, scorerect.centery, 5, 5))
+
+        # flip display
+        pygame.display.flip()
 
 
 # create a game and run it
