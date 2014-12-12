@@ -240,7 +240,10 @@ class BlockFactory(object):
         # load all our block images
         self.images = {
             1: pygame.image.load("brick.png").convert(),
-            2: pygame.image.load("solidbrick.png").convert()
+            2: pygame.image.load("solidbrick.png").convert(),
+            3: pygame.image.load("solidbrick.png").convert(),
+            4: pygame.image.load("solidbrick.png").convert(),
+            5: pygame.image.load("solidbrick.png").convert()
         }
 
     def getBlock(self, xy, level=1):
