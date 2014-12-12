@@ -25,7 +25,7 @@ from tkFileDialog import askopenfilename
 try: import cPickle as pickle
 except ImportError: import pickle
 from pygame.locals import *
-import pygame, random, sys, ezmenu, level_editor
+import pygame, random, sys, ezmenu, levelbuilder
 
 
 def main(screen):
